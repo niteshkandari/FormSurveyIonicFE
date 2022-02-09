@@ -1,0 +1,61 @@
+.height-full {
+  padding: 8px;
+  height: 75vh;
+}
+
+.fl-between {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.seondary-bt {
+  position: absolute;
+  font-size: larger;
+  bottom: 30px;
+  width: 90%;
+}
+
+.tertiary-bt {
+  position: absolute;
+  font-size: larger;
+  bottom: 20px;
+  left: 17px;
+  width: 90%;
+}
+.grid {
+  display: grid;
+  grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+  gap: 20px;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.loader-container {
+  position: relative;
+}
+.loader-box {
+  position: absolute;
+  height: 100px;
+  width: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 35%;
+  left: 35%;
+  z-index: 99999;
+}
+.text-box {
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  padding: 1px;
+}
+.custom-theme{
+    background: #000;
+}
