@@ -1,18 +1,22 @@
-import { Redirect, Route } from "react-router-dom";
+import { IonReactRouter } from "@ionic/react-router";
 import {
   IonApp,
   IonRouterOutlet,
-  IonTabs,
+  IonSplitPane,
   setupIonicReact,
 } from "@ionic/react";
-import { IonReactRouter } from "@ionic/react-router";
-import Home from "./pages/Home";
-import Insight from "./pages/Insight";
-import Tool from "./pages/Tool";
-import { IonTabBar, IonTabButton, IonIcon, IonLabel } from "@ionic/react";
-import { heart, calculator, create } from "ionicons/icons";
-/* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
+import { useDispatch } from "react-redux";
+import { HttpApiServiceProvider } from "./services/Http.Api.service";
+import Login from "./pages/Login";
+import React, { useEffect } from "react";
+import { Redirect, Route, Switch } from "react-router-dom";
+import Menu from "./pages/Menu";
+import TabsRoutes from "./pages/TabsRoutes";
+import { checkAutoLogin, checkUserIsLoggedIn } from "./AuthService/AuthService";
+import { FacadeLayerProvider } from "./facade/facade";
+import { AuthProvider } from "./facade/AuthFacade";
+/* Core CSS required for Ionic components to work properly */
 
 /* Basic CSS for apps built with Ionic */
 import "@ionic/react/css/normalize.css";
@@ -29,41 +33,35 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
-
 setupIonicReact();
 
 const App: React.FC = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    checkAutoLogin(dispatch);
+  }, []);
+
   return (
     <IonApp>
-        <IonReactRouter>
-          <IonTabs>
-            <IonRouterOutlet>
-              <Route exact={true} path="/home/edit/:id" component={Home} />
-              <Route exact={true} path="/home" component={Home} />
-              <Route exact={true} path="/insight" component={Insight} />
-              <Route exact={true} path="/tool" component={Tool} />
-              <Route exact path="/">
-                <Redirect to="/home" />
-              </Route>
-            </IonRouterOutlet>
-            <IonTabBar slot="bottom">
-              <IonTabButton href="/home" tab="home">
-                <IonIcon icon={create} />
-                <IonLabel>Create</IonLabel>
-              </IonTabButton>
-
-              <IonTabButton href="/insight" tab="insight">
-                <IonIcon icon={heart} />
-                <IonLabel>Forms</IonLabel>
-              </IonTabButton>
-
-              <IonTabButton href="/tool" tab="tool">
-                <IonIcon icon={calculator} />
-                <IonLabel>tool</IonLabel>
-              </IonTabButton>
-            </IonTabBar>
-          </IonTabs>
-        </IonReactRouter>
+      <HttpApiServiceProvider>
+        <AuthProvider>
+        <FacadeLayerProvider>
+          <IonReactRouter>
+            <IonSplitPane contentId="main">
+              {checkUserIsLoggedIn() && <Menu />}
+              <IonRouterOutlet id={"main"}>
+                <Switch>
+                  <Route path="/login" component={Login} />
+                  <Route path="/tabs" component={TabsRoutes} />
+                  <Redirect exact path="/" to="/login" />
+                </Switch>
+              </IonRouterOutlet>
+            </IonSplitPane>
+          </IonReactRouter>
+        </FacadeLayerProvider>
+        </AuthProvider>
+      </HttpApiServiceProvider>
     </IonApp>
   );
 };

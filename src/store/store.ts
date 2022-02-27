@@ -1,19 +1,35 @@
-import { createStore } from "redux";
+import { createStore, combineReducers } from "redux";
 
-const reducer = (
-  state: { loadApi: boolean } = { loadApi: false },
-  action: { type: string }
+const tokenReducer = (
+  state: { token: string } = { token: "" },
+  action: { type: string; payload: any }
 ) => {
   switch (action.type) {
-    case "Call-Api":
-      return { loadApi: (state.loadApi = true) };
-    case "Reset":
-      return { loadApi: (state.loadApi = false) };
+    case "store-token":
+      localStorage.setItem("token", action.payload);
+      return { token: (state.token = action.payload) };
+    case "delete-token":
+      localStorage.removeItem("token");
+      return { token: (state.token = "") };
     default:
       return state;
   }
 };
 
-const store = createStore(reducer);
+const userReducer = (
+  state:{id:string} = {id:""} ,
+  action:{type:string, payload:any}
+) => {
+ switch (action.type) {
+   case 'SET-ID':
+     return {id: state.id = action.payload};
+   case 'RESET-ID':
+     return {id: state.id = ""};
+   default: 
+      return state;    
+  }
+};
+
+const store = createStore(combineReducers({tokenReducer,userReducer}));
 
 export default store;

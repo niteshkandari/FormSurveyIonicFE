@@ -4,113 +4,103 @@ import {
   IonButton,
   IonContent,
   IonPage,
-  IonChip,
-  IonIcon,
   IonLabel,
   IonList,
-  IonItemDivider,
   IonItem,
   IonInput,
   IonActionSheet,
   IonToast,
   IonLoading,
-} from "@ionic/react";
-import {
-  checkmarkDone,
-  person,
-  menu,
-  trash,
-  share,
-  heart,
-  add,
-} from "ionicons/icons";
+  IonToggle,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonMenuButton,
+  IonTitle,} from "@ionic/react";
+import { checkmarkDone, trash, share, heart, add } from "ionicons/icons";
 import "../css/style.css";
-import React from "react";
-import Axios from "axios";
-import { useDispatch } from "react-redux";
+import React,{useEffect, useState} from "react";
+import { useFacade } from "../facade/facade";
 
-const Home: React.FC = () => {
-  const slideOpts = {
-    initialSlide: 1,
-    speed: 400,
-  };
-  const [name, setName] = React.useState<string>("");
-  const [email, setEmail] = React.useState<string>("");
-  const [address, setAddress] = React.useState<string>("");
-  const [phoneNo, setPhoneNo] = React.useState<string>("");
-  const [showActionSheet, setShowActionSheet] = React.useState<boolean>(false);
-  const [showToast, setShowToast] = React.useState<boolean>(false);
-  const [showWarning, setShowWarning] = React.useState<boolean>(false);
-  const [warning, setWarning] = React.useState<string>("");
-  const [loading, setLoading] = React.useState<boolean>(false);
+const CreateForm: React.FC = () => {
+  const facade:any = useFacade();
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
+  const [phoneNo, setPhoneNo] = useState<string>("");
+  const [showActionSheet, setShowActionSheet] = useState<boolean>(false);
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const [showWarning, setShowWarning] = useState<boolean>(false);
+  const [warning, setWarning] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [toggle, setToggle] = useState<boolean>(false);
   const match: any = useRouteMatch();
   const history = useHistory();
-  const dispatch = useDispatch();
 
-  // React.useEffect(() => {
-  // // if(location && location.state) {
-  // //   console.log(location.state);
-  // // }
-  // if(match && match.params){
-  //   setFormId(match.params.id);
-  // }
-  // },[match])
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (match && match.params && match.params.id) {
       getFormData();
     }
-  }, [match]);
+  }, [match.params.id]);
+  
+  useEffect(() => {
+    let mounted = false;
+    if (mounted) {
+      getFormData();
+    }
+    return () => {
+      mounted = true;
+    };
+  }, []);
+  
+  const resetStates = () => {
+    setName("");
+    setAddress("");
+    setEmail("");
+    setPhoneNo("");
+    setShowToast(true);
+    setLoading(false);
+  };
 
-  const handleFormData = async() => {
+  const handleFormData = async () => {
     let reqBody = {
       name: name,
       email: email,
       phoneNumber: +phoneNo,
       address: address,
-      service: true,
+      service: toggle,
     };
     let isValidated: boolean = false;
     await ValidateFormData.validator(reqBody)
-      .then((result) => (result === true ? (isValidated = true) : isValidated=false))
+      .then((result) =>
+        result === true ? (isValidated = true) : (isValidated = false)
+      )
       .catch((err) => setWarning(err.warning));
     if (isValidated) {
       if (!match.params.id) {
         setLoading(true);
-        console.log(reqBody, "body");
-        Axios.post("http://localhost:6060/form/add", reqBody)
-          .then((response) => {
-            const { data } = response;
-            dispatch({ type: "Call-Api" });
-            setName("");
-            setAddress("");
-            setEmail("");
-            setPhoneNo("");
-            setShowToast(true);
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+        facade.createForm(reqBody).then((response: { data: any; }) => {
+          const { data } = response;
+          if (response) {
+            resetStates();
+          }
+        })
+        .catch((error: any) => {
+          setWarning("something went wrong");
+          setShowWarning(true);
+        });
       } else {
         setLoading(true);
-        Axios.patch(`http://localhost:6060/form/${match.params.id}`, reqBody)
-          .then(() => {
-            dispatch({ type: "Call-Api" });
-            setName("");
-            setAddress("");
-            setEmail("");
-            setPhoneNo("");
-            setShowToast(true);
-            setLoading(false);
+        facade.updateForm({id:match.params.id,body:reqBody}).then(() => {
+            resetStates();
+            history.replace("/tabs/p/createForm");
           })
-          .catch((error) => {
+          .catch((error:any) => {
             console.error(error);
           });
       }
-    }
-    else{
-      setShowWarning(true)
+    } else {
+      setShowWarning(true);
     }
     setWarning("");
   };
@@ -121,37 +111,36 @@ const Home: React.FC = () => {
     setAddress("");
     setEmail("");
     setPhoneNo("");
-    history.push("/home");
+    history.replace("/tabs/p/CreateForm");
   };
 
   const getFormData = () => {
     setLoading(true);
-    Axios.get(`http://localhost:6060/form/${match.params.id}`)
-      .then((success) => {
-        const { data } = success;
-        setName(data.name);
-        setAddress(data.address);
-        setEmail(data.email);
-        setPhoneNo(data.phoneNumber);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    facade.getFormById(match.params.id).then((success: { data: any; }) => {
+      const { data } = success;
+      console.log(data, "success");
+      setName(data.name);
+      setAddress(data.address);
+      setEmail(data.email);
+      setPhoneNo(data.phoneNumber);
+      setLoading(false);
+    })
+    .catch((err: any) => {
+      console.log(err);
+    });
   };
 
   return (
     <IonPage>
-      <IonContent className="custom theme ion-padding loader-container">
-        <div className="fl-between">
-          <IonIcon icon={menu} size="large" color="dark" />
-          <div></div>
-          <IonChip>
-            <IonIcon icon={person}></IonIcon>
-            <IonLabel>user</IonLabel>
-          </IonChip>
-        </div>
-
+      <IonHeader className="ion-header">
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonMenuButton />
+          </IonButtons>
+          <IonTitle>Create Form</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className="ion-padding loader-container">
         <IonToast
           mode={"ios"}
           position={"top"}
@@ -162,7 +151,7 @@ const Home: React.FC = () => {
           message="Form submitted successfully !!!"
           duration={2000}
         />
-         <IonToast
+        <IonToast
           mode={"ios"}
           position={"top"}
           icon={checkmarkDone}
@@ -180,8 +169,8 @@ const Home: React.FC = () => {
           message={"Please wait..."}
           duration={7000}
         />
-        <IonList className="layout" mode="ios" inset={true}>
-          <IonItemDivider color="warning" />
+        <IonList id="main-content" className="layout" mode="ios" inset={true}>
+          {/* <IonItemDivider color="warning" /> */}
 
           <IonItem>
             <IonLabel position="floating" color="primary">
@@ -238,10 +227,24 @@ const Home: React.FC = () => {
             ></IonInput>
           </IonItem>
 
-          <IonItemDivider color="warning" />
+          <IonItem>
+            <IonLabel color="primary">Continue Service</IonLabel>
+            <IonToggle
+              checked={toggle}
+              onIonChange={() => setToggle((prev) => !prev)}
+              slot="end"
+              color="secondary"
+            />
+          </IonItem>
+          {/* <IonItemDivider/> */}
+          <IonItem />
         </IonList>
 
-        <IonButton onClick={() => setShowActionSheet(true)} expand="block">
+        <IonButton
+          color="secondary"
+          onClick={() => setShowActionSheet(true)}
+          expand="block"
+        >
           Action
         </IonButton>
         <IonActionSheet
@@ -292,7 +295,7 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default CreateForm;
 {
   /* <IonItemDivider>Readonly input</IonItemDivider> */
 }

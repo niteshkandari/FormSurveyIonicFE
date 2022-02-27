@@ -4,7 +4,6 @@ import {
   IonCard,
   IonCardContent,
   IonCardHeader,
-  IonCardSubtitle,
   IonCardTitle,
   IonContent,
   IonHeader,
@@ -17,78 +16,63 @@ import {
   IonToolbar,
   IonToast,
   IonLoading,
+  IonButtons,
+  IonMenuButton,
 } from "@ionic/react";
 import { pencil, trash, sad } from "ionicons/icons";
-import Axios from "axios";
 import "../css/style.css";
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { FC, useEffect, useState } from "react";
+import { useFacade } from "../facade/facade";
 
-const Insight: React.FC = () => {
-  const [formData, setFormData] = React.useState([]);
-  const [showToast, setShowToast] = React.useState(false);
-  const [showLoading, setShowLoading] = React.useState(false);
-  const shouldCall = useSelector((state: any) => state.loadApi);
-  const dispatch = useDispatch();
+const Forms: FC = () => {
+  const [formData, setFormData] = useState([]);
+  const [showToast, setShowToast] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
   const history = useHistory();
+  const facade:any = useFacade();
 
   const slideOpts = {
     initialSlide: 1,
     speed: 400,
   };
-
-  React.useEffect(() => {
-    let unmounted = false;
-    if (!unmounted) {
+ 
+   useEffect(() => {
+    let mounted = false;
+    if (!mounted) {
       getFormData();
-      if (shouldCall) {
-        getFormData();
-        dispatch({ type: "Reset" });
-      }
     }
     return () => {
-      unmounted = true;
+      mounted = true;
     };
-  }, [shouldCall]);
+  }, []);
 
   const getFormData = () => {
     setShowLoading(true);
-    Axios.get("http://localhost:6060/form/")
-      .then((response) => {
-        const { data } = response;
-        console.log(data);
-        // setTimeout(() => {
-        setFormData(data.Form);
-        setShowLoading(false);
-        // },1000)
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    facade.getAllForms().then((response: { data: any; }) =>{
+      const { data } = response;
+      setFormData(data.Form);
+      setShowLoading(false);
+    }) .catch((error: any) => {
+      console.error(error);
+    });
   };
 
   const handleDeleteEntry = (id: number) => {
-    console.log(formData, "before del");
     setShowLoading(true);
     setShowToast(true);
-    Axios.delete(`http://localhost:6060/form/${id}`)
-      .then((res) => {
-        let filterd = formData.filter((item: any) => item._id != id);
-        setFormData(filterd);
-        setShowLoading(false);
-        setShowToast(false);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    facade.deleteForm(id).then((res: any) => {
+      let filterd = formData.filter((item: any) => item._id !== id);
+      setFormData(filterd);
+      setShowLoading(false);
+      setShowToast(false);
+    }) .catch((error: any) => {
+      console.log(error);
+    });
   };
 
   const handleEditEntry = (id: number) => {
     history.push({
-      pathname: `/home/edit/${id}`,
-      // state: {
-      //   id: id,
-      // },
+      pathname: `/tabs/p/CreateForm/edit/${id}`
     });
   };
 
@@ -108,7 +92,10 @@ const Insight: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Insight</IonTitle>
+          <IonButtons slot="start">
+            <IonMenuButton />
+          </IonButtons>
+          <IonTitle>Forms</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -132,12 +119,11 @@ const Insight: React.FC = () => {
         />
         {!showLoading && formData.length > 0 ? (
           <IonSlides pager={false} options={slideOpts}>
-            {formData.map((item: any, id: any) => (
-              <IonSlide key={item._id + id}>
+            {formData.map(({_id:id,name,phoneNumber,email,address,service=false}, idx: any) => (
+              <IonSlide key={id + idx}>
                 <IonCard color={getTheme()} className="height-full">
                   <IonCardHeader>
-                    {/* <IonCardSubtitle>Form : {id+1}</IonCardSubtitle> */}
-                    <IonCardTitle>Form : {id + 1}</IonCardTitle>
+                    <IonCardTitle>Form : {idx + 1}</IonCardTitle>
                   </IonCardHeader>
 
                   <IonCardContent>
@@ -146,35 +132,41 @@ const Insight: React.FC = () => {
                         <span className={"text-box"}>id</span>
                       </IonLabel>
                       <IonLabel>
-                        <span className={"text-box"}>{item._id}</span>
+                        <span className={"text-box"}>{(id+'').slice(0,14)}</span>
                       </IonLabel>
                       <IonLabel>
                         <span className={"text-box"}>name</span>
                       </IonLabel>
                       <IonLabel>
-                        <span className={"text-box"}>{item.name}</span>
+                        <span className={"text-box"}>{name}</span>
                       </IonLabel>
                       <IonLabel>
                         <span className={"text-box"}>email</span>
                       </IonLabel>
                       <IonLabel>
-                        <span className={"text-box"}>{item.email}</span>
+                        <span className={"text-box"}>{email}</span>
                       </IonLabel>
                       <IonLabel>
                         <span className={"text-box"}>address</span>
                       </IonLabel>
                       <IonLabel>
-                        <span className={"text-box"}>{item.address}</span>
+                        <span className={"text-box"}>{address}</span>
                       </IonLabel>
                       <IonLabel>
                         <span className={"text-box"}>phone number</span>
                       </IonLabel>
                       <IonLabel>
-                        <span className={"text-box"}>{item.phoneNumber}</span>
+                        <span className={"text-box"}>{phoneNumber}</span>
+                      </IonLabel>
+                      <IonLabel>
+                      <span className={"text-box"}>Service Continue</span>
+                      </IonLabel>
+                      <IonLabel>
+                      <span className={"text-box"}>{service ? 'yes' : 'no'}</span>
                       </IonLabel>
                     </div>
                     <IonButton
-                      onClick={() => handleEditEntry(item._id)}
+                      onClick={() => handleEditEntry(id)}
                       fill={"outline"}
                       color={"light"}
                       expand="block"
@@ -183,7 +175,7 @@ const Insight: React.FC = () => {
                       Edit
                     </IonButton>
                     <IonButton
-                      onClick={() => handleDeleteEntry(item._id)}
+                      onClick={() => handleDeleteEntry(id)}
                       fill={"outline"}
                       color={"light"}
                       expand="block"
@@ -233,4 +225,4 @@ const Insight: React.FC = () => {
   );
 };
 
-export default Insight;
+export default Forms;
