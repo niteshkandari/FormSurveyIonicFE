@@ -7,7 +7,7 @@ export class ValidateFormData {
   }) {
       const { name,email,address, phoneNumber } = reqBody;   
       return new Promise((resolve, reject) => {
-          if(name == "" && address == "" && address == "") {
+          if(name === "" && address === "" && address === "") {
             reject({val:false,warning:"Fields cannot be empty"});
         }
         else if(name.length > 20 ){

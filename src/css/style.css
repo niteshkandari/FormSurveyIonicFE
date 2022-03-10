@@ -2,7 +2,7 @@
 
 .height-full {
   padding: 8px;
-  height: 75vh;
+  height: 100vh;
 }
 
 .fl-between {
@@ -83,6 +83,7 @@
   left:11%;
   padding:20px;
   width:300px;
+  height:280px;
   display:flex;
   flex-direction:column;
   justify-content:center;
@@ -98,7 +99,18 @@
  background: rgba(255,255,255,0.4);
  border:none;
 }
-.login-form button{
+.login-form .sign-btn{
+  position:absolute;
+  bottom:2px;
+  right:16px;
+  padding:4px;
+  border:none;
+  background:transparent;
+  text-decoration: underline;
+  color:#fff;
+  font-size: 21px; 
+}
+.login-form .sub-btn{
   padding:10px;
   font-size:28px;
   border-radius: 10px;
@@ -107,7 +119,7 @@
   border: 1px solid white;
   color: #fff;
   font-weight: 800;
-}.login-form button:hover{
+}.login-form .sub-btn:hover{
   background:#fff;
   color: #abe9cd;
 }

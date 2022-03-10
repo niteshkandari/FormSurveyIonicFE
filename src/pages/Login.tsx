@@ -1,4 +1,4 @@
-import { IonContent, IonPage } from "@ionic/react";
+import { IonContent, IonPage, IonToast } from "@ionic/react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
@@ -11,6 +11,8 @@ const Login = () => {
   const dispatch = useDispatch();
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
+  const [isSignIn,setSignIn] = useState(false);
+  const [showToast,setShowToast] = useState({state:false,message:"",color:""});
 
   const handleLoginUser = (e: any) => {
     e.preventDefault();
@@ -18,6 +20,7 @@ const Login = () => {
       email: id,
       password: password,
     };
+    if(!isSignIn){
     authFacade
       .login(reqBody)
       .then((result: { status: number; data: { token: any } }) => {
@@ -29,15 +32,39 @@ const Login = () => {
           setPassword("");
         }
       })
-      .catch((err: any) => console.error(err));
+      .catch((err: any) => setShowToast({state:true, message:"Username or passsword is incorrect",color:'danger'})
+      );
+    }else{
+      authFacade.signUp(reqBody).then((result:any) => {
+         if(result.status === 201) {
+            setShowToast({state:true, message:"Account created successfully",color:'success'});
+            setSignIn(false);
+         }
+      }).catch((err: any) =>  setShowToast({state:true, message:err,color:'danger'}));
+    }
   };
+  
+  const handleChangeScreen = () => {
+    setId("");
+    setPassword("");
+    setSignIn(true);
+  }
 
   return (
     <IonPage>
       <IonContent>
+      <IonToast
+          mode={"ios"}
+          position={"top"}
+          isOpen={showToast.state}
+          color={showToast.color}
+          onDidDismiss={() => setShowToast({state:false,message:"",color:''})}
+          message={showToast.message}
+          duration={2000}
+        />
         <div className="login-page">
           <div className="logo-box">
-            <h1>Surveyior 🎠 </h1>
+            <h1>{`${isSignIn ? 'Sign Up' : 'Surveyior 🎠 '}`}</h1>
           </div>
           <form className="login-form" onSubmit={handleLoginUser}>
             <input
@@ -57,7 +84,8 @@ const Login = () => {
               color={"primary"}
               onChange={(e) => setPassword(e.target.value)}
             ></input>
-            <button type="submit">Submit</button>
+            <button className={"sub-btn"} type="submit">Submit</button>
+           {!isSignIn && <button className={'sign-btn'} onClick={handleChangeScreen}>sign up</button>}
           </form>
         </div>
       </IonContent>

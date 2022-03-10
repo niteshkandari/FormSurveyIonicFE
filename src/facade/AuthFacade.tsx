@@ -14,8 +14,14 @@ export const AuthProvider = (props:any) => {
       return httpApiService.post(url, requestBody);
     }
 
+    const signUp = (requestBody:any) => {
+        let url = API_URL.SIGN_UP;
+        return httpApiService.post(url, requestBody);
+    }
+
     callers = {
-        login
+        login,
+        signUp
     }
     return (
         <AuthContext.Provider value={callers}>
