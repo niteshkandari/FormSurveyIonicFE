@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/FormSurveyIonicFE/static/css/main.5877751d.css",
+    "main.css": "/FormSurveyIonicFE/static/css/main.0af7ebc6.css",
     "main.js": "/FormSurveyIonicFE/static/js/main.ded3e72a.js",
     "static/js/630.c9320fe4.chunk.js": "/FormSurveyIonicFE/static/js/630.c9320fe4.chunk.js",
     "static/js/738.2eadc79d.chunk.js": "/FormSurveyIonicFE/static/js/738.2eadc79d.chunk.js",
@@ -20,7 +20,7 @@
     "static/js/621.d92872da.chunk.js": "/FormSurveyIonicFE/static/js/621.d92872da.chunk.js",
     "service-worker.js": "/FormSurveyIonicFE/service-worker.js",
     "index.html": "/FormSurveyIonicFE/index.html",
-    "main.5877751d.css.map": "/FormSurveyIonicFE/static/css/main.5877751d.css.map",
+    "main.0af7ebc6.css.map": "/FormSurveyIonicFE/static/css/main.0af7ebc6.css.map",
     "main.ded3e72a.js.map": "/FormSurveyIonicFE/static/js/main.ded3e72a.js.map",
     "630.c9320fe4.chunk.js.map": "/FormSurveyIonicFE/static/js/630.c9320fe4.chunk.js.map",
     "738.2eadc79d.chunk.js.map": "/FormSurveyIonicFE/static/js/738.2eadc79d.chunk.js.map",
@@ -40,7 +40,7 @@
     "621.d92872da.chunk.js.map": "/FormSurveyIonicFE/static/js/621.d92872da.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5877751d.css",
+    "static/css/main.0af7ebc6.css",
     "static/js/main.ded3e72a.js"
   ]
 }
