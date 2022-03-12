@@ -10,7 +10,7 @@ export function checkAutoLogin(dispatch:any) {
 export function checkUserIsLoggedIn() {
     let tokeninLocalStorage = localStorage.getItem('token');
     if(tokeninLocalStorage){
-        return true
+        return true;
     }
     return false; 
 }

@@ -2,7 +2,14 @@
 
 .height-full {
   padding: 8px;
-  height: 100vh;
+  min-height: 70vh;
+}
+
+@media (min-width:768px) {
+  .height-full {
+    height:85vh;
+    width:100% !important;
+  }
 }
 
 .fl-between {

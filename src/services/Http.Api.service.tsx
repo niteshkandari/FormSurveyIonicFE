@@ -8,11 +8,14 @@ const HttpApiServiceContext = createContext(operationsAllowed);
 
 export const HttpApiServiceProvider = (props: any) => {
   const bearerToken = useSelector((state: any) => state.tokenReducer.token);
-  const BASE_URL = process.env.REACT_APP_API_URL;
+  // const BASE_URL = process.env.REACT_APP_API_URL;
+  const BASE_URL = '';
 
   const getHeaders = () => {
     return {
-      headers: { Authorization: "Bearer " + bearerToken },
+      headers: {
+        Authorization: "Bearer " + bearerToken,
+      },
     };
   };
 
