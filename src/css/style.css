@@ -10,6 +10,10 @@
     height:85vh;
     width:100% !important;
   }
+  .login-form{
+    width: 80% !important;
+    height: 30% !important;
+  }
 }
 
 .fl-between {
