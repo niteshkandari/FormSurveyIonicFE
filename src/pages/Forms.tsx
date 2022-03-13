@@ -46,10 +46,10 @@ const Forms: FC = () => {
     };
   }, []);
 
-  const getFormData = () => {
+  const getFormData = async () => {
     setShowLoading(true);
-    facade.getAllForms().then((response: { data: any; }) =>{
-      const { data } = response;
+    facade.getAllForms().then(async(response: { data: any; }) =>{
+      const data = await response.data;
       setFormData(data.Form);
       setShowLoading(false);
     }) .catch((error: any) => {
@@ -117,9 +117,9 @@ const Forms: FC = () => {
           message={"Please wait..."}
           duration={7000}
         />
-        {!showLoading && formData.length > 0 ? (
+        {/* {(formData && formData.length > 0) ? ( */}
           <IonSlides pager={false} options={slideOpts}>
-            {formData.map(({_id:id,name,phoneNumber,email,address,service=false}, idx: any) => (
+            {formData && formData?.map(({_id:id,name,phoneNumber,email,address,service=false}, idx: number) => (
               <IonSlide key={id + idx}>
                 <IonCard color={getTheme()} className="height-full">
                   <IonCardHeader>
@@ -188,9 +188,9 @@ const Forms: FC = () => {
               </IonSlide>
             ))}
           </IonSlides>
-        ) : (
-          <>
-            {!showLoading && (
+        {/* ) : ( */}
+          {/* <> */}
+            {/* {(
               <IonCard color={getTheme()} className="height-full">
                 <div
                   style={{
@@ -219,7 +219,7 @@ const Forms: FC = () => {
               </IonCard>
             )}
           </>
-        )}
+        )} */}
       </IonContent>
     </IonPage>
   );

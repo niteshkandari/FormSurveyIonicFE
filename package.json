@@ -1,12 +1,12 @@
 {
-  "homepage": "https://niteshkandari.github.io/FormSurveyIonicFE",
+  "homepage": "https://niteshkandari.github.io/FormSurveyIonicFE/",
   "name": "demo-2",
   "version": "0.0.1",
   "private": true,
   "proxy": "https://formsurvey-controllerservice.herokuapp.com/",
   "dependencies": {
-    "@capacitor/cli": "^3.4.3",
-    "@capacitor/core": "^3.4.3",
+    "@capacitor/android": "^3.4.3",
+    "@capacitor/core": "3.4.3",
     "@ionic/react": "^6.0.0",
     "@ionic/react-router": "^6.0.0",
     "@testing-library/jest-dom": "^5.11.9",
@@ -71,5 +71,7 @@
     ]
   },
   "description": "An Ionic project",
-  "devDependencies": {}
+  "devDependencies": {
+    "@capacitor/cli": "3.4.3"
+  }
 }

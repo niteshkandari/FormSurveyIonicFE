@@ -15,6 +15,7 @@ export const HttpApiServiceProvider = (props: any) => {
     return {
       headers: {
         Authorization: "Bearer " + bearerToken,
+        'app-id':'com.example.app',
       },
     };
   };
